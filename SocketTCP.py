@@ -16,12 +16,11 @@ class SocketTCP:
         self.m_socketType=False
         self.addr = ()
         
-    def OpenServer(self,ipAddress,port,multicast):
+    def OpenServer(self,ipAddress,port):
         
         self.Close()
         self.m_localIPAddress=ipAddress
         self.m_localPort=port
-        self.m_multicast=multicast
         
         #creazione della socket
         try:
@@ -42,18 +41,17 @@ class SocketTCP:
         except m_lsocket.error as errlist:
             print("SocketTCP::listen failed with error %s" %errlist)
         
-        self.m_socket, clientaddr = m_lsocket.accept()
-        print("SocketTCP::accept OK")
+        self.m_socket, self.addr = m_lsocket.accept()
+        print("SocketTCP::Accept OK")
         self.m_socketType=True
         print("SocketTCP:Connect OK")
         
     
-    def OpenClient(self,ipAddress,port,multicast):
+    def OpenClient(self,ipAddress,port):
         
         self.Close()
         self.m_localIPAddress=ipAddress
         self.m_localPort=port
-        self.m_multicast=multicast
         
         #creazione della socket
         try:
@@ -61,17 +59,34 @@ class SocketTCP:
             self.m_socket = socket(AF_INET, SOCK_STREAM)
             print ("Socket successfully created")
         except OSError as err:
-            print ("socket creation failed with error %s" %(err))
+            print ("Socket creation failed with error %s" %(err))
             exit(0)
         self.addr=(self.m_localIPAddress,self.m_localPort)
         self.m_socket.connect(self.addr)
         self.m_socketType=False
         print("SocketTCP:Connect OK")            
         
+    def Send(self, buffer):
+        totalsent=0
+        while totalsent<len(buffer):
+            sent=self.m_socket.send(buffer.encode('ascii'))
+            if (sent==0):
+                raise RuntimeError("SocketTCP::sendto failed")
+            totalsent=totalsent+sent
+        print("Message send successfully")
+            
+    def Receive(self):
+        data=self.m_socket.recv(4096)
+        if not data:
+            raise RuntimeError("SocketTCP::recvfrom failed")
+        print ("Messaggio %s" %data.decode('ascii'))
+        
+            
     def Close(self):
         if (self.m_socket >= 0):
             self.m_socket.close()
             SocketTCP.__init()
     
-Server=SocketTCP()
-Server.OpenServer("localhost", 5777, False)       
+'''Server=SocketTCP()
+Server.OpenServer("127.0.0.1", 5777) 
+Server.Receive()'''

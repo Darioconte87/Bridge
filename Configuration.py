@@ -65,7 +65,6 @@ class Configuration:
                     #assegna valore della label ad un valore
                     Configuration.IPAddressMap[SingleLine[1]]=ipAddress
                     
-                    
                 elif(SingleLine[0].lower()==Configuration.SOCKET_TYPE_TAG.lower()):    
                     if((SingleLine[1].lower()==Configuration.SOCKET_TYPE_CLIENT_VALUE.lower())):
                         ipAddress.SocketType=SingleLine[1]
@@ -143,5 +142,6 @@ class Configuration:
                 buffer+=self.Line[i]
         self.Line=buffer
         
+#test di funzionamento della classe        
 prova = Configuration()
 prova.ReadConfigurationFromFile()
