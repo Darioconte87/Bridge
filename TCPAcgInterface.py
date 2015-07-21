@@ -7,22 +7,24 @@ from Configuration import *
 from TCPSimulatorThread import *
 from MyThread import *
 
-class TCPAcgInterface(object):
+class TCPAcgInterface(MyThread):
     
     def __init__(self):
-        self.simulatorThread = 0;
+        pass
     
     def m_Run(self):
         label="ACG"
         #prende il file di configurazione specificato nella classe Configuration
         configuration=Configuration()
         #leggi i parametri dal file di configurazione a seconda della label
-        configuration.ReadConfigurationFromFile()
+        configuration.ReadConfigurationFromFile("../BridgeACG.ini")
         Object_Label=Configuration.IPAddressMap[label]
         print("Metto in ascolto l'interaccia %s su %s: %s" %(label,Object_Label.IP,Object_Label.Port))
+        #aif
         thread=TCPSimulatorThread(label,Object_Label.IP,Object_Label.Port,Object_Label.Multicast,Object_Label.MessageType,Object_Label.SocketType)
+        thread.start()
         
-        
-        
-Interfaccia=TCPAcgInterface()
-Interfaccia.m_Run()
+                
+                
+    def isRunning(self):
+        return MyThread.bRunning    

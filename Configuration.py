@@ -25,21 +25,20 @@ class Configuration:
     
     # Path di default
     
-    PATH_CONFIGURATION_FILE = "..\Bridge.ini"
+    #PATH_CONFIGURATION_FILE = "../Bridge.ini"
     
     def __init__(self): 
         self.Line = ""
         self.LineNumber = 0
-    
-    def set_Path(self, s):
-        self.PATH_CONFIGURATION_FILE = s
+        self.PATH_CONFIGURATION_FILE=""
         
-    def ReadConfigurationFromFile(self):
+    def ReadConfigurationFromFile(self,path):
+        self.PATH_CONFIGURATION_FILE=path
         
         try:
             #apro in lettura il file di configurazione
             
-            f = open(Configuration.PATH_CONFIGURATION_FILE, 'r')
+            f = open(self.PATH_CONFIGURATION_FILE, 'r')
         except:
             print("File di configurazione non trovato")
              
@@ -98,13 +97,13 @@ class Configuration:
          
         f.close()        
     #CHECK 
-    '''          
+        '''
         print("Type:%s" %ipAddress.SocketType)        
         print("IP:%s" %ipAddress.IP)
         print("Porta %s"%ipAddress.Port)
         print("Multicast %s"%ipAddress.Multicast)
         print("Messagge Type: %s" %ipAddress.MessageType)                    
-    '''             
+        '''
                     
         
         
@@ -142,6 +141,8 @@ class Configuration:
                 buffer+=self.Line[i]
         self.Line=buffer
         
+'''        
 #test di funzionamento della classe        
 prova = Configuration()
-prova.ReadConfigurationFromFile()
+prova.ReadConfigurationFromFile("../BridgeACG.ini")
+'''

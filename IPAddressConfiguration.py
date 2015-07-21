@@ -8,7 +8,7 @@ class IPAddressConfiguration(object):
 
     def __init__(self):
         
-        self.SocketType = False
+        self.SocketType = ""
         self.Port = 0
         self.Multicast = False
         self.MessageType = 0

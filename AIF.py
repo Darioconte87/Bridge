@@ -1,19 +1,18 @@
 '''
-Created on 15 lug 2015
+Created on 21 lug 2015
 
 @author: DarioConte
 '''
 from socket import *
-
-class SocketTCP:
-    
+class AIF(object):
+       
     def __init__(self):
         self.m_socket = -1
         self.m_localPort = -1
         self.m_multicast = False
         self.m_joined = False
         self.m_localIPAddress=""
-        self.m_socketType=""
+        self.m_socketType=False
         self.addr = ()
         
     def OpenServer(self,ipAddress,port):
@@ -45,7 +44,6 @@ class SocketTCP:
         print("SocketTCP::Accept OK")
         self.m_socketType="Client"
         print("SocketTCP:Connect OK")
-        
     
     def OpenClient(self,ipAddress,port):
         
@@ -57,13 +55,16 @@ class SocketTCP:
         try:
             #crea una AF_INET, STREAM socket (TCP)
             self.m_socket = socket(AF_INET, SOCK_STREAM)
-            print ("Socket successfully created")
+            print ("Socket Client successfully created")
         except OSError as err:
             print ("Socket creation failed with error %s" %(err))
             exit(0)
         self.addr=(self.m_localIPAddress,self.m_localPort)
-        self.m_socket.connect(self.addr)
-        self.m_socketType="Server"
+        try:
+            self.m_socket.connect(self.addr)
+        except OSError as err:
+            raise Exception("Server not in listening. Error: %s" %err)
+        self.m_socketType=False
         print("SocketTCP:Connect OK")            
         
     def Send(self, buffer):
@@ -74,20 +75,8 @@ class SocketTCP:
                 raise RuntimeError("SocketTCP::sendto failed")
             totalsent=totalsent+sent
         print("Message send successfully")
-            
-    def Receive(self):
-        data=self.m_socket.recv(4096)
-        if not data:
-            raise RuntimeError("SocketTCP::recvfrom failed")
-        decoded_data=data.decode('ascii')
-        print ("Messaggio Ricevuto: %s" %decoded_data)
-        return decoded_data
-            
+    
     def Close(self):
         if (self.m_socket >= 0):
             self.m_socket.close()
-            SocketTCP.__init()
-'''    
-Server=SocketTCP()
-Server.OpenServer("127.0.0.1", 5777) 
-Server.Receive()'''
+            AIF.__init()

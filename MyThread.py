@@ -3,20 +3,31 @@ Created on 20 lug 2015
 
 @author: DarioConte
 '''
-from threading import Thread
+import threading
 
 class MyThread(object):
     
-    def __init__(self):
-        Thread.__init__(self)
-        self.thread=Thread()
+    bRunning=False
+    ThreadId=0
+    
+    def __init__(self,t):
+        self.t=t
         
     def start(self):    
-        self.thread.start()
+        if(MyThread.bRunning==True): 
+            return
+        MyThread.bRunning=True
+        #creo il thread e richiamo il metodo M_run
+        self.t = threading.Thread(target=self.m_Run)
+        print("Creo nuovo thread per gestire la chiamata: %s"%self.t.getName())
+        self.t.start()     
+    
+    #metodo che sara sovrascritto dalle funzioni    
+    def m_Run(self):
+        pass
         
     def stop(self):
-        self.thread.join()
-    
-    def run(self):
-        print("ciao")
-
+        if(MyThread.bRunning==False):
+            return;
+        MyThread.bRunning = False;
+        self.t.join()

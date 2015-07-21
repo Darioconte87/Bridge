@@ -52,7 +52,7 @@ class ClientTCP:
         if (self.m_socket >= 0):
             self.m_socket.close()
             ClientTCP.__init()
-    
-'''Server=ClientTCP()
-Server.OpenClient("127.0.0.1", 5777)
+'''    
+Server=ClientTCP()
+Server.OpenClient("127.0.0.1", 15000)
 Server.Send("ciao da carlos")'''
