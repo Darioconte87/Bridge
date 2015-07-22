@@ -4,6 +4,8 @@ Created on 15 lug 2015
 @author: DarioConte
 '''
 from socket import *
+import select
+import time
 
 class SocketTCP:
     
@@ -83,12 +85,23 @@ class SocketTCP:
         #print ("Messaggio Ricevuto: %s" %decoded_data)
         return decoded_data
             
+    def ReceiveWithTimeout(self):
+        self.m_socket.setblocking(0)
+        ready = select.select([self.m_socket], [], [], 60)
+        if ready[0]:
+            data = self.m_socket.recv(4096)
+        decoded_data=data.decode('ascii')
+        #print ("Messaggio Ricevuto: %s" %decoded_data)
+        return decoded_data
+    
     def Close(self):
         if (self.m_socket >= 0):
             self.m_socket.close()
             SocketTCP.__init()
-
+'''
 Server=SocketTCP()
 Server.OpenServer("127.0.0.1", 15000) 
-msg=Server.Receive()
+msg=Server.ReceiveWithTimeout()
+print("MEssaggio ricevuto %s"%msg)
 Server.Send(msg)
+'''

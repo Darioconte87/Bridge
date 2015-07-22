@@ -5,9 +5,8 @@ Created on 15 lug 2015
 '''
 from socket import *
 import select
-import time
 
-class ClientTCP:
+class StartAIF:
     
     def __init__(self):
         self.m_socket = -1
@@ -99,11 +98,11 @@ class ClientTCP:
     def Close(self):
         if (self.m_socket >= 0):
             self.m_socket.close()
-            ClientTCP.__init()
+            StartAIF.__init()
 
 
-Server=ClientTCP()
-Server.OpenClient("127.0.0.1", 15000)
-Server.Send("HOLAAAAA...hasta la vistaaa..magnannaaaaaaaaa")
-msg=Server.ReceiveWithTimeout()
+AIF=StartAIF()
+AIF.OpenServer("127.0.0.1", 15001)
+
+msg=AIF.ReceiveWithTimeout()
 print("messaggio ricevuto in echo dal bridge %s" %msg)

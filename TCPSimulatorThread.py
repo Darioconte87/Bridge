@@ -23,21 +23,27 @@ class TCPSimulatorThread(MyThread):
         MyThread.run(self)
         #creo la socket per la comunicazione
         
-        SocketIACG=SocketTCP()
+        Socket_ACG=SocketTCP()
+        Socket_AIF=SocketTCP()
         
         if(self.m_socketType==self.Client):
             #PARTE CLIENT
             print("CONFIGURAZIONE CLIENT")
-            SocketIACG.OpenClient(self.m_ip, int(self.m_port))
+            Socket_ACG.OpenClient(self.m_ip, int(self.m_port))
         else:
             #PARTE SERVER
             print("CONFIGURAZIONE SERVER")
-            SocketIACG.OpenServer(self.m_ip, int(self.m_port))
+            Socket_ACG.OpenServer(self.m_ip, int(self.m_port))
             #si mette in attesa di un messaggio da parte di ACG
             #print("Messaggio ricevuto da ACG")
-            msg=SocketIACG.Receive()
-            print("ACG ha inviato al bridge il seguente messaggio: %s " %msg)
-            SocketIACG.Send(msg)
+            msg=Socket_ACG.ReceiveWithTimeout()
+            print("Client ha inviato al bridge il seguente messaggio: %s " %msg)
+            
+            #Smista il messaggio all'altra entità in ascolto (uso una classe Thread tipo Dispatcher??)
+            
+            Socket_AIF.OpenClient(self.m_ip, 15001)
+            Socket_AIF.Send(msg)
+            
             
         '''
         while(self.isRunning()):
@@ -52,8 +58,9 @@ class TCPSimulatorThread(MyThread):
                 msg1=SocketACG.Receive()
                 print("Ricevuto su ACG %s" %msg1)
         '''
+                
     def isRunning(self):
-        return MyThread.bRunning
+        return self.bRunning
 '''               
 simulatore=TCPSimulatorThread("ACG","127.0.0.1","5777",False,"0",False)
 simulatore.start()
