@@ -80,14 +80,15 @@ class SocketTCP:
         if not data:
             raise RuntimeError("SocketTCP::recvfrom failed")
         decoded_data=data.decode('ascii')
-        print ("Messaggio Ricevuto: %s" %decoded_data)
+        #print ("Messaggio Ricevuto: %s" %decoded_data)
         return decoded_data
             
     def Close(self):
         if (self.m_socket >= 0):
             self.m_socket.close()
             SocketTCP.__init()
-'''    
+
 Server=SocketTCP()
-Server.OpenServer("127.0.0.1", 5777) 
-Server.Receive()'''
+Server.OpenServer("127.0.0.1", 15000) 
+msg=Server.Receive()
+Server.Send(msg)
