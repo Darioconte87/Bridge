@@ -6,6 +6,7 @@ Created on 15 lug 2015
 from socket import *
 import select
 import time
+import threading
 
 class SocketTCP:
     
@@ -82,12 +83,12 @@ class SocketTCP:
         if not data:
             raise RuntimeError("SocketTCP::recvfrom failed")
         decoded_data=data.decode('ascii')
-        #print ("Messaggio Ricevuto: %s" %decoded_data)
+        print ("Messaggio Ricevuto: %s" %decoded_data)
         return decoded_data
             
     def ReceiveWithTimeout(self):
         self.m_socket.setblocking(0)
-        ready = select.select([self.m_socket], [], [], 60)
+        ready = select.select([self.m_socket], [], [], 120)
         if ready[0]:
             data = self.m_socket.recv(4096)
         decoded_data=data.decode('ascii')
@@ -98,10 +99,34 @@ class SocketTCP:
         if (self.m_socket >= 0):
             self.m_socket.close()
             SocketTCP.__init()
-'''
+            
+    #metodo per consentire al server di rispondere a più client
+            
+    def OpenServer2(self,ipAddress,port):   
+        
+        self.Close()
+        self.m_localIPAddress=ipAddress
+        self.m_localPort=port
+        self.addr=(self.m_localIPAddress,self.m_localPort)
+        
+        serversocket = socket(AF_INET, SOCK_STREAM)
+
+        serversocket.bind(self.addr)
+
+        serversocket.listen(2)
+
+        while 1:
+            print ("Server is listening for connections\n")
+            self.m_socket, self.addr = serversocket.accept()
+            threading.Thread(target=self.handler, args=(self.m_socket,self.addr)).start()
+            print("ritorna?")
+        
+    def handler(self,clientsocket,clientaddr):
+        print ("Accepted connection from one client")
+        data = self.Receive()
+        
+'''         
 Server=SocketTCP()
-Server.OpenServer("127.0.0.1", 15000) 
-msg=Server.ReceiveWithTimeout()
-print("MEssaggio ricevuto %s"%msg)
-Server.Send(msg)
+Server.OpenServer2("127.0.0.1", 15000) 
+#Server.Send("replica")
 '''

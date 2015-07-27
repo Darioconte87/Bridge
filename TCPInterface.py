@@ -28,4 +28,3 @@ class TCPInterface(MyThread):
         print("Metto in ascolto l'interaccia %s su %s: %s" %(self.label,Object_Label.IP,Object_Label.Port)) 
         thread=TCPSimulatorThread(self.label,Object_Label.IP,Object_Label.Port,Object_Label.Multicast,Object_Label.MessageType,Object_Label.SocketType)
         thread.start()
-        

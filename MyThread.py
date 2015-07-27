@@ -3,6 +3,7 @@ Created on 20 lug 2015
 
 @author: DarioConte
 '''
+
 from threading import Thread
 
 class MyThread(Thread):
@@ -22,4 +23,4 @@ class MyThread(Thread):
         if(self.bRunning==False):
             return;
         self.bRunning = False;
-        self.t.join()
+        self.join()

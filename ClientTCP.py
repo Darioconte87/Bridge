@@ -58,7 +58,7 @@ class ClientTCP:
         try:
             #crea una AF_INET, STREAM socket (TCP)
             self.m_socket = socket(AF_INET, SOCK_STREAM)
-            print ("Socket Client successfully created")
+            #print ("Socket Client successfully created")
         except OSError as err:
             print ("Socket creation failed with error %s" %(err))
             exit(0)
@@ -77,7 +77,7 @@ class ClientTCP:
             if (sent==0):
                 raise RuntimeError("SocketTCP::sendto failed")
             totalsent=totalsent+sent
-        print("Message send successfully to bridge")
+        print("ACG ha inviato il messaggio correttamente")
         
     def Receive(self):
         data=self.m_socket.recv(4096)
@@ -89,7 +89,7 @@ class ClientTCP:
     
     def ReceiveWithTimeout(self):
         self.m_socket.setblocking(0)
-        ready = select.select([self.m_socket], [], [], 60)
+        ready = select.select([self.m_socket], [], [], 120)
         if ready[0]:
             data = self.m_socket.recv(4096)
         decoded_data=data.decode('ascii')
@@ -102,8 +102,10 @@ class ClientTCP:
             ClientTCP.__init()
 
 
+'''                       
 Server=ClientTCP()
 Server.OpenClient("127.0.0.1", 15000)
-Server.Send("HOLAAAAA...hasta la vistaaa..magnannaaaaaaaaa")
-msg=Server.ReceiveWithTimeout()
-print("messaggio ricevuto in echo dal bridge %s" %msg)
+Server.Send("Hola..come estas? ")
+reply=Server.ReceiveWithTimeout()
+print("reply da AIF passando per il bridge %s"%reply)
+'''

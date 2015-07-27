@@ -44,7 +44,6 @@ class StartAIF:
         
         self.m_socket, self.addr = m_lsocket.accept()
         print("SocketTCP::Accept OK")
-        self.m_socketType="Client"
         print("SocketTCP:Connect OK")
     
     def OpenClient(self,ipAddress,port):
@@ -66,7 +65,6 @@ class StartAIF:
             self.m_socket.connect(self.addr)
         except OSError as err:
             raise Exception("Server not in listening. Error: %s" %err)
-        self.m_socketType=False
         print("SocketTCP:Connect OK")            
         
     def Send(self, buffer):
@@ -103,6 +101,7 @@ class StartAIF:
 
 AIF=StartAIF()
 AIF.OpenServer("127.0.0.1", 15001)
-
 msg=AIF.ReceiveWithTimeout()
-print("messaggio ricevuto in echo dal bridge %s" %msg)
+print("Ho ricevuto questo messaggio dal bridge %s" %msg)
+reply="Todo bien, mucha grazias"
+AIF.Send(reply)
