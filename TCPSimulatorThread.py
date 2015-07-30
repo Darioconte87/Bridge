@@ -39,7 +39,7 @@ class TCPSimulatorThread(MyThread):
             msg_client=Socket_ACG.ReceiveWithTimeout()
             print("Client ha inviato al bridge il seguente messaggio: %s " %msg_client)
             #Smista il messaggio all'altra entità in ascolto (uso una classe Thread tipo Dispatcher??)
-            Socket_AIF.OpenClient(self.m_ip, 15001)
+            Socket_AIF.OpenClient(self.m_ip, 15000)
             #Socket_AIF.OpenClient("192.168.48.128", 15000)
             Socket_AIF.Send(msg_client)
             msg_Aif=Socket_AIF.ReceiveWithTimeout()

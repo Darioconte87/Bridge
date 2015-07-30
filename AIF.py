@@ -4,6 +4,7 @@ Created on 21 lug 2015
 @author: DarioConte
 '''
 from socket import *
+import select
 class AIF(object):
        
     def __init__(self):
@@ -66,6 +67,15 @@ class AIF(object):
             raise Exception("Server not in listening. Error: %s" %err)
         self.m_socketType=False
         print("SocketTCP:Connect OK")            
+    
+    def ReceiveWithTimeout(self):
+        self.m_socket.setblocking(0)
+        ready = select.select([self.m_socket], [], [], 120)
+        if ready[0]:
+            data = self.m_socket.recv(4096)
+        decoded_data=data.decode('ascii')
+        #print ("Messaggio Ricevuto: %s" %decoded_data)
+        return decoded_data
         
     def Send(self, buffer):
         totalsent=0
@@ -80,3 +90,10 @@ class AIF(object):
         if (self.m_socket >= 0):
             self.m_socket.close()
             AIF.__init()
+'''            
+aif=AIF()
+aif.OpenServer("127.0.0.1", 15000)
+msg=aif.ReceiveWithTimeout()
+print("messaggio ricevuto in echo dal bridge %s" %msg)
+aif.Send("Todo bien..muchas gracias")
+'''

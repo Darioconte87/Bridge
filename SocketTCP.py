@@ -33,7 +33,7 @@ class SocketTCP:
         except OSError as err:
             print ("socket creation failed with error %s" %(err))
             exit(0)
-        self.addr=(self.m_localIPAddress,self.m_localPort)
+        self.addr=("0.0.0.0",self.m_localPort)
         try:
             m_lsocket.bind(self.addr)
         except OSError as err:

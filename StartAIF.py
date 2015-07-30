@@ -100,7 +100,7 @@ class StartAIF:
 
 
 AIF=StartAIF()
-AIF.OpenServer("127.0.0.1", 15001)
+AIF.OpenServer("127.0.0.1", 15000)
 msg=AIF.ReceiveWithTimeout()
 print("Ho ricevuto questo messaggio dal bridge %s" %msg)
 reply="Todo bien, mucha grazias"
