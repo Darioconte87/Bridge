@@ -19,4 +19,4 @@ class Messaggi(object):
     AcgDllGetLogonOut={"m_logonType":AcgLogonTypes}
     AcgDllGetLogonReturn = {"m_returnValue": AcgErrors,"m_args":AcgDllGetLogonOut}
     AcgMessageReceive={"m_callback":CallBack,"m_DllArg":AcgDllGetLogonReturn}
-    AcgMsgtoSend={"messaggio":AcgMessageReceive,"buffer":0}
+    AcgMsgtoSend={"messaggio":AcgMessageReceive,"buffer":None}
