@@ -5,6 +5,8 @@ Created on 21 lug 2015
 '''
 from socket import *
 import select
+import json
+
 class AIF(object):
        
     def __init__(self):
@@ -76,6 +78,16 @@ class AIF(object):
         decoded_data=data.decode('ascii')
         #print ("Messaggio Ricevuto: %s" %decoded_data)
         return decoded_data
+     
+    def Receive_Structure(self):
+        self.m_socket.setblocking(0)
+        ready = select.select([self.m_socket], [], [], 120)
+        if ready[0]:
+            data = b''
+            tmp = self.m_socket.recv(4096)
+            data += tmp
+        decoded_data = json.loads(data.decode('utf-8'))
+        return decoded_data    
         
     def Send(self, buffer):
         totalsent=0
@@ -90,10 +102,15 @@ class AIF(object):
         if (self.m_socket >= 0):
             self.m_socket.close()
             AIF.__init()
-'''            
+'''
 aif=AIF()
 aif.OpenServer("127.0.0.1", 15000)
 msg=aif.ReceiveWithTimeout()
 print("messaggio ricevuto in echo dal bridge %s" %msg)
 aif.Send("Todo bien..muchas gracias")
 '''
+            
+aif=AIF()
+aif.OpenServer("127.0.0.1", 15000)
+msg=aif.Receive_Structure()
+print(msg["messaggio"]["latDegrees"])

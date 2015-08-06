@@ -6,6 +6,8 @@ Created on 15 lug 2015
 from socket import *
 import select
 import time
+import json
+
 
 class ClientTCP:
     
@@ -79,6 +81,11 @@ class ClientTCP:
             totalsent=totalsent+sent
         print("ACG ha inviato il messaggio correttamente")
         
+    def Send_Structure(self, msg):
+        b = json.dumps(msg).encode('utf-8')
+        self.m_socket.sendall(b)
+        print("Messaggio mandato con successo")
+        
     def Receive(self):
         data=self.m_socket.recv(4096)
         if not data:
@@ -102,13 +109,13 @@ class ClientTCP:
             ClientTCP.__init()
 
 
-                       
+'''                       
 Server=ClientTCP()
 #Server.OpenClient("127.0.0.1", 5001)
 Server.OpenClient("192.168.48.130", 15000)
 Server.Send("Hola..come estas? ")
 
-'''
+
 reply=Server.ReceiveWithTimeout()
 print("reply da AIF passando per il bridge %s"%reply)
 '''
