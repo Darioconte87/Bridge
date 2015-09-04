@@ -17,7 +17,7 @@ class MyThread(Thread):
         if(self.bRunning==True): 
             return
         self.bRunning=True
-        print("Creazione %s"%self.getName())
+        #print("Creazione %s"%self.getName())
   
     def stop(self):
         if(self.bRunning==False):

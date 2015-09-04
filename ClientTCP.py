@@ -20,39 +20,9 @@ class ClientTCP:
         self.m_socketType=False
         self.addr = ()
         
-    def OpenServer(self,ipAddress,port):
         
-        self.Close()
-        self.m_localIPAddress=ipAddress
-        self.m_localPort=port
+    def OpenClient(self,ipAddress,port,port_send):
         
-        #creazione della socket
-        try:
-            #crea una AF_INET, STREAM socket (TCP)
-            m_lsocket = socket(AF_INET, SOCK_STREAM)
-            print ("Socket successfully created")
-        except OSError as err:
-            print ("socket creation failed with error %s" %(err))
-            exit(0)
-        self.addr=(self.m_localIPAddress,self.m_localPort)
-        try:
-            m_lsocket.bind(self.addr)
-        except OSError as err:
-            print("SocketTCP::bind failed with error: %s" %err)
-        try:
-            m_lsocket.listen(5)
-            print("Socket now listening")
-        except m_lsocket.error as errlist:
-            print("SocketTCP::listen failed with error %s" %errlist)
-        
-        self.m_socket, self.addr = m_lsocket.accept()
-        print("SocketTCP::Accept OK")
-        self.m_socketType="Client"
-        print("SocketTCP:Connect OK")
-    
-    def OpenClient(self,ipAddress,port):
-        
-        self.Close()
         self.m_localIPAddress=ipAddress
         self.m_localPort=port
         
@@ -61,61 +31,54 @@ class ClientTCP:
             #crea una AF_INET, STREAM socket (TCP)
             self.m_socket = socket(AF_INET, SOCK_STREAM)
             #print ("Socket Client successfully created")
-        except OSError as err:
-            print ("Socket creation failed with error %s" %(err))
+        except:
+            raise Exception ("Socket creation failed")
             exit(0)
         self.addr=(self.m_localIPAddress,self.m_localPort)
+        try:
+            self.m_socket.bind(("127.0.0.1",port_send)) #questo permette di settare l'indirizzo completo da cui inviare i dati
+        except:
+            raise Exception("Binding error")
+        
+        #TIME_WAIT is the state that typically ties up the port for several minutes after the process has completed.
+                
+        result=self.m_socket.connect_ex(self.addr)
+        
+        #IMPORTANTE! Questo ciclo garantisce che la connessione effettivamente e' avvenuta con successo
+        #BYPASSA il problema del TIME_WAIT
+        
+        while(result!=0):
+            result=self.m_socket.connect_ex(self.addr)
+        
+        '''    
         try:
             self.m_socket.connect(self.addr)
         except OSError as err:
             raise Exception("Server not in listening. Error: %s" %err)
+        '''
         self.m_socketType=False
         print("SocketTCP:Connect OK")            
-        
-    def Send(self, buffer):
-        totalsent=0
-        while totalsent<len(buffer):
-            sent=self.m_socket.send(buffer.encode('ascii'))
-            if (sent==0):
-                raise RuntimeError("SocketTCP::sendto failed")
-            totalsent=totalsent+sent
-        print("ACG ha inviato il messaggio correttamente")
-        
+            
     def Send_Structure(self, msg):
         b = json.dumps(msg).encode('utf-8')
         self.m_socket.sendall(b)
         print("Messaggio mandato con successo")
+        self.Close()
         
-    def Receive(self):
-        data=self.m_socket.recv(4096)
-        if not data:
-            raise RuntimeError("SocketTCP::recvfrom failed")
-        decoded_data=data.decode('ascii')
-        print ("Messaggio Ricevuto: %s" %decoded_data)
-        return decoded_data
-    
-    def ReceiveWithTimeout(self):
-        self.m_socket.setblocking(0)
-        ready = select.select([self.m_socket], [], [], 120)
-        if ready[0]:
-            data = self.m_socket.recv(4096)
-        decoded_data=data.decode('ascii')
-        #print ("Messaggio Ricevuto: %s" %decoded_data)
-        return decoded_data
-    
     def Close(self):
-        if (self.m_socket >= 0):
             self.m_socket.close()
-            ClientTCP.__init()
+            
 
 
-'''                       
+
+"""                       
 Server=ClientTCP()
 #Server.OpenClient("127.0.0.1", 5001)
-Server.OpenClient("192.168.48.130", 15000)
+#Server.OpenClient("192.168.48.130", 15000)
+Server.OpenClient("127.0.0.1", 8080)
 Server.Send("Hola..come estas? ")
 
 
 reply=Server.ReceiveWithTimeout()
 print("reply da AIF passando per il bridge %s"%reply)
-'''
+"""

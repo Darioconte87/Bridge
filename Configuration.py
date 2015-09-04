@@ -114,7 +114,7 @@ class Configuration:
         
     def split(self):
         #splitta la stringa in due campi (LABEL e VALORI)
-        SingleLine=self.Line.split(sep=":", maxsplit=1)
+        SingleLine=self.Line.split(":")
         return SingleLine    
         
     def AbortExecution(self):    

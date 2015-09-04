@@ -25,6 +25,7 @@ class TCPInterface(MyThread):
         #leggi i parametri dal file di configurazione a seconda della label
         configuration.ReadConfigurationFromFile(self.path)
         Object_Label=Configuration.IPAddressMap[self.label]
-        print("Metto in ascolto l'interaccia %s su %s: %s" %(self.label,Object_Label.IP,Object_Label.Port)) 
+        print("Metto in ascolto l'interaccia %s su %s: %s \n" %(self.label,Object_Label.IP,Object_Label.Port)) 
         thread=TCPSimulatorThread(self.label,Object_Label.IP,Object_Label.Port,Object_Label.Multicast,Object_Label.MessageType,Object_Label.SocketType)
         thread.start()
+        

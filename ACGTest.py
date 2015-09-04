@@ -9,7 +9,7 @@ from InterfaceUtils import *
 
 import copy
 
-class AIFTest(object):
+class ACGTest(object):
 
     maRealeAtn=copy.deepcopy(AcgMobileAddress)
     maRealeFANS=copy.deepcopy(AcgMobileAddress)
@@ -31,7 +31,7 @@ class AIFTest(object):
         
         print("AIF in ascolto")
         Cdb=InterfaceUtils()
-        Cdb.OpenClient("127.0.0.1",15000)
+        Cdb.OpenClient("127.0.0.1",5001)
 
         #PROVA COMUNICAZIONE ACG-AIF CON LE STRUTTURE DATI
         
@@ -57,5 +57,5 @@ class AIFTest(object):
         #Acg.OpenClient("127.0.0.1", 5001)
         
         
-aif=AIFTest()
+aif=ACGTest()
 aif.StartUpMasterOperative()
