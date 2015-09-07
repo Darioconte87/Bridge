@@ -96,21 +96,6 @@ class Configuration:
                     self.AbortExecution()    
          
         f.close()        
-    #CHECK 
-        '''
-        print("Type:%s" %ipAddress.SocketType)        
-        print("IP:%s" %ipAddress.IP)
-        print("Porta %s"%ipAddress.Port)
-        print("Multicast %s"%ipAddress.Multicast)
-        print("Messagge Type: %s" %ipAddress.MessageType)                    
-        '''
-                    
-        
-        
-        
-        
-        
-        
         
     def split(self):
         #splitta la stringa in due campi (LABEL e VALORI)
@@ -140,6 +125,16 @@ class Configuration:
             if(self.Line[i]!=' ') and (self.Line[i]!='\t') and (self.Line[i]!='\n'):
                 buffer+=self.Line[i]
         self.Line=buffer
+    
+#CHECK 
+'''
+print("Type:%s" %ipAddress.SocketType)        
+print("IP:%s" %ipAddress.IP)
+print("Porta %s"%ipAddress.Port)
+print("Multicast %s"%ipAddress.Multicast)
+print("Messagge Type: %s" %ipAddress.MessageType)                    
+'''
+                    
         
 '''        
 #test di funzionamento della classe        

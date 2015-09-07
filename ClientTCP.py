@@ -2,6 +2,8 @@
 Created on 15 lug 2015
 
 @author: DarioConte
+
+Subject: ECHO CLIENT
 '''
 from socket import *
 import select
@@ -36,7 +38,7 @@ class ClientTCP:
             exit(0)
         self.addr=(self.m_localIPAddress,self.m_localPort)
         try:
-            self.m_socket.bind(("127.0.0.1",port_send)) #questo permette di settare l'indirizzo completo da cui inviare i dati
+            self.m_socket.bind((self.m_localIPAddress,port_send)) #questo permette di settare l'indirizzo completo da cui inviare i dati
         except:
             raise Exception("Binding error")
         
@@ -49,13 +51,7 @@ class ClientTCP:
         
         while(result!=0):
             result=self.m_socket.connect_ex(self.addr)
-        
-        '''    
-        try:
-            self.m_socket.connect(self.addr)
-        except OSError as err:
-            raise Exception("Server not in listening. Error: %s" %err)
-        '''
+
         self.m_socketType=False
         print("SocketTCP:Connect OK")            
             

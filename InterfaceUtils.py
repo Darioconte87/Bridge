@@ -2,11 +2,11 @@
 Created on 07 ago 2015
 
 @author: DarioConte
+Classe di funzione per AIF-ACG
 '''
 
 from socket import *
-import select
-import time
+from Configuration import *
 import json
 
 
@@ -46,6 +46,19 @@ class InterfaceUtils:
         b = json.dumps(msg).encode('utf-8')
         self.m_socket.sendall(b)
         print("Messaggio mandato con successo")
+    
+    def GetAddress(self,label):
+        ConfigurationPaths={"ACG":"../BridgeACG.ini","AIF":"../BridgeAIF.ini"}
+        path=ConfigurationPaths[label]
+        #prende il file di configurazione specificato nella classe Configuration
+        configuration=Configuration()
+        #leggi i parametri dal file di configurazione a seconda della label
+        configuration.ReadConfigurationFromFile(path)
+        Object_Label=Configuration.IPAddressMap[label]
+        port=Object_Label.Port
+        IP=Object_Label.IP
+        address=(IP,port)
+        return address
         
     def Close(self):
         if (self.m_socket >= 0):

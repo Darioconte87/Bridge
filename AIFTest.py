@@ -31,7 +31,8 @@ class AIFTest(object):
         
         print("AIF in ascolto")
         Cdb=InterfaceUtils()
-        Cdb.OpenClient("127.0.0.1",15000)
+        AifAddress=Cdb.GetAddress("AIF")
+        Cdb.OpenClient(AifAddress[0],AifAddress[1])
 
         #PROVA COMUNICAZIONE ACG-AIF CON LE STRUTTURE DATI
         
@@ -55,7 +56,8 @@ class AIFTest(object):
         print("ACG: Connessione con ACG....")
         #Acg=InterfaceUtils()
         #Acg.OpenClient("127.0.0.1", 5001)
-        
+
+    
         
 aif=AIFTest()
 aif.StartUpMasterOperative()

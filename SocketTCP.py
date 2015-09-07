@@ -1,8 +1,16 @@
+'''
+Created on 03 ago 2015
+
+@author: DarioConte
+
+ECHO SERVER
+'''
+
 from ClientTCP import *
+from InterfaceUtils import *
 import asyncore
 import socket
 import json
-from idlelib.PyShell import PORT
 
 
 
@@ -28,10 +36,17 @@ class SocketTCP(asyncore.dispatcher_with_send):
         
     def dispatcher(self,msg):
         
-        Acg_port=5001
-        Aif_port=15000
-        Acg_port_send=5002
-        Aif_port_send=15001
+        
+        Cdb=InterfaceUtils()
+        AifAddress=Cdb.GetAddress("AIF")
+        Aif_IP=AifAddress[0]
+        Aif_port=AifAddress[1]
+        AcgAddress=Cdb.GetAddress("ACG")
+        Acg_IP=AcgAddress[0]
+        Acg_port=AcgAddress[1]
+        
+        Acg_port_send=Acg_port+1
+        Aif_port_send=Aif_port+1
         
         #AIF
         if(self.whoiam==Aif_port and self.source_port!=Acg_port_send):
