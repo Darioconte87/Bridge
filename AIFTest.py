@@ -6,7 +6,8 @@ Created on 03 ago 2015
 from AcgMessages import *
 from AifMessages import *
 from InterfaceUtils import *
-
+from Utilities import *
+import time
 import copy
 
 class AIFTest(object):
@@ -27,12 +28,11 @@ class AIFTest(object):
         #inizializza le strutture dati
         #aif=AIFTest()
         
-        #SALTO FASE DI ALLINEAMENTO CDB....DA IMPLEMENTARE
+        #SALTO FASE DI ALLINEAMENTO CDB....
         
         print("AIF in ascolto")
         Cdb=InterfaceUtils()
-        AifAddress=Cdb.GetAddress("AIF")
-        Cdb.OpenClient(AifAddress[0],AifAddress[1])
+        Cdb.OpenAIFInterface()
 
         #PROVA COMUNICAZIONE ACG-AIF CON LE STRUTTURE DATI
         
@@ -51,13 +51,34 @@ class AIFTest(object):
         infoMsg["messaggio"]["lonMinutes"]=22
         infoMsg["messaggio"]["lonSeconds"]=0
         infoMsg["messaggio"]["lonOri"]=69
+        
+        print("CDB: Invio sys info...")
+        #manda messaggio ad AIF
         Cdb.sendmsg(infoMsg)
         print("CDB: sys info inviato!!")
-        print("ACG: Connessione con ACG....")
-        #Acg=InterfaceUtils()
-        #Acg.OpenClient("127.0.0.1", 5001)
-
-    
+        print("ACG: Connessione con ACG....")     
         
+        time.sleep(200)
+        
+        
+        '''
+        services=copy.deepcopy(AcgMsgToSend)
+        Cdb.OpenACGInterface()
+        print("ACG: receive offered services...")
+        print("ACG: Offered services received")
+        Cdb.sendmsg(services)
+        '''
+        '''
+        utilities=Utilities()
+        utilities.azzeraMessaggio(services)
+        
+        #building offered services
+        services["data"]["buffer"]=1 #tutti i servizi sono abilitati
+        services["data"]["messaggio"]["m_callback"]=126 #cb_registerCallback
+        
+        
+        time.sleep(100)
+        '''
+       
 aif=AIFTest()
 aif.StartUpMasterOperative()

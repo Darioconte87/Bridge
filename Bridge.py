@@ -11,3 +11,5 @@ if __name__ == '__main__':
     print("Avvio del Bridge")
     AvvioInterfacciaACG=TCPInterface("ACG")
     AvvioInterfacciaACG.start()
+    
+    

@@ -7,7 +7,7 @@ Classe di funzione per AIF-ACG
 
 from socket import *
 from Configuration import *
-import json
+import pickle
 
 
 class InterfaceUtils:
@@ -43,9 +43,10 @@ class InterfaceUtils:
         print("SocketTCP:Connect OK")            
     
     def sendmsg(self, msg):
-        b = json.dumps(msg).encode('utf-8')
+        b = pickle.dumps(msg)
         self.m_socket.sendall(b)
         print("Messaggio mandato con successo")
+        self.m_socket.close()
     
     def GetAddress(self,label):
         ConfigurationPaths={"ACG":"../BridgeACG.ini","AIF":"../BridgeAIF.ini"}
@@ -60,6 +61,14 @@ class InterfaceUtils:
         address=(IP,port)
         return address
         
+    def OpenAIFInterface(self):
+        AifAddress=self.GetAddress("AIF")
+        self.OpenClient(AifAddress[0],AifAddress[1])
+    
+    def OpenACGInterface(self):
+        AcgAddress=self.GetAddress("ACG")
+        self.OpenClient(AcgAddress[0],AcgAddress[1])
+            
     def Close(self):
         if (self.m_socket >= 0):
             self.m_socket.close()

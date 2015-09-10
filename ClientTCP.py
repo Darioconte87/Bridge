@@ -8,7 +8,11 @@ Subject: ECHO CLIENT
 from socket import *
 import select
 import time
-import json
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 
 class ClientTCP:
@@ -56,7 +60,7 @@ class ClientTCP:
         print("SocketTCP:Connect OK")            
             
     def Send_Structure(self, msg):
-        b = json.dumps(msg).encode('utf-8')
+        b = pickle.dumps(msg)
         self.m_socket.sendall(b)
         print("Messaggio mandato con successo")
         self.Close()

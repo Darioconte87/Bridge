@@ -10,7 +10,12 @@ from ClientTCP import *
 from InterfaceUtils import *
 import asyncore
 import socket
-import json
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
 
 
 
@@ -23,11 +28,15 @@ class SocketTCP(asyncore.dispatcher_with_send):
         self.whoiam=whoiam
           
     def handle_read(self):
-        data = b''
-        tmp = self.recv(4096)
-        data += tmp
-        msg = json.loads(data.decode('utf-8'))    
+        while True:
+            try:
+                tmp = self.recv(4096)
+            except:
+                self.close()
+                break
+        msg = pickle.loads(tmp)
         #Confrontando il valore di porta, si smista il messaggio verso AIF o ACG o si memorizza
+        #print(msg)
         self.dispatcher(msg)
         self.close()
     
@@ -45,6 +54,8 @@ class SocketTCP(asyncore.dispatcher_with_send):
         Acg_IP=AcgAddress[0]
         Acg_port=AcgAddress[1]
         
+        #Porte scelte per la connessione dati
+        
         Acg_port_send=Acg_port+1
         Aif_port_send=Aif_port+1
         
@@ -52,23 +63,25 @@ class SocketTCP(asyncore.dispatcher_with_send):
         if(self.whoiam==Aif_port and self.source_port!=Acg_port_send):
             #invia messaggio ad ACG
             Acg=ClientTCP()
-            Acg.OpenClient("127.0.0.1", Acg_port,Aif_port_send)
+            Acg.OpenClient(Acg_IP, Acg_port,Aif_port_send)
             Acg.Send_Structure(msg)
             print("Messaggio inviato ad ACG")
         elif(self.whoiam==Aif_port and self.source_port==Acg_port_send):
             print("Messaggio ricevuto da ACG")
-            print("DEBUG: Stampa valore latDegrees contenuto nel messaggio: %d" %(msg["messaggio"]["latDegrees"])) 
+            print("DEBUG: STAMPA MESSAGGIO RICEVUTO %s"%msg)
+            #print("DEBUG: Stampa valore latDegrees contenuto nel messaggio: %d" %(msg["messaggio"]["latDegrees"])) 
             print("Faro' qualcosa ....")
         #ACG
         elif(self.whoiam==Acg_port and self.source_port!=Aif_port_send):
             #invio messaggio ad AIF
             Aif=ClientTCP()
-            Aif.OpenClient("127.0.0.1", Aif_port,Acg_port_send)
+            Aif.OpenClient(Aif_IP, Aif_port,Acg_port_send)
             Aif.Send_Structure(msg)
             print("Messaggio inviato ad AIF")
         elif(self.whoiam==Acg_port and self.source_port==Aif_port_send):
             print("Messaggio ricevuto da AIF")
-            print("DEBUG: Stampa valore latDegrees contenuto nel messaggio: %d" %(msg["messaggio"]["latDegrees"])) 
+            print("DEBUG: STAMPA MESSAGGIO RICEVUTO %s"%msg)
+            #print("DEBUG: Stampa valore latDegrees contenuto nel messaggio: %d" %(msg["messaggio"]["latDegrees"])) 
             print("...faro' qualcosa...")
                 
 class EchoServer(asyncore.dispatcher):

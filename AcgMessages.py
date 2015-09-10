@@ -5,11 +5,7 @@ Created on 03 ago 2015
 '''
 from Enumeration import *
 
-class MyClass(object):
-    '''
-    classdocs
-    '''
-
+class AcgMessages(object):
 
     def __init__(self, params):
         '''
@@ -478,7 +474,7 @@ AcgAcmGetMessageReturn_u = {"m_args":AcgAcmGetMessageOut}
 AcgAcmGetMessageReturn  = {"m_returnValue":AcgErrors,"AcgAcmGetMessageReturn_u":AcgAcmGetMessageReturn_u}
 AcgAclMsgSendIn  = {"NumEle":None,"m_ci":None,"m_mobileAddress":AcgMobileAddress,"m_dateTime":AcgDateTime,"m_msgRef":None,"m_lar":None,"m_element":AcgCpdlcUplinkElement,"m_Asas_element":AcgAsasUplinkElement}
 AcgConnectIn  = {"m_facilityDesignation":None}
-unione = {"m_DllArg":AcgDllContactIn,"m_AccPeriodic":AcgAccSetPeriodicIn,"m_AccDemand":AcgAccSetDemandIn,"m_AccEvent":AcgAccSetEventIn,"m_AccEmergency":AcgAccSetEmergencyIn,"m_AccCancelContract":AcgAccCancelContractIn,"m_AcmConnect":AcgAcmConnectIn,"m_AcmSendVci":AcgAcmSendVciIn,"m_AclSend":AcgAclMsgSendIn,"m_DasFsmSend":AcgFSMIn,"m_DasAtiReport":AcgDatisCReportIn,"m_DclSend":AcgDclReportIn,"m_DclFsmSend":AcgFSMIn,"m_AcgAbort;//Abor":AcgAbortDialogIn,"m_DllLogonResp":AcgDllLogonResponseIn,"m_DllForward":AcgDllForwardIn,"m_ManSend":AcgManCommandIn,"m_AcmLack":AcgLackIn,"m_ConnectIn":AcgConnectIn}
+unione = {"m_DllArg":AcgDllContactIn,"m_AccPeriodic":AcgAccSetPeriodicIn,"m_AccDemand":AcgAccSetDemandIn,"m_AccEvent":AcgAccSetEventIn,"m_AccEmergency":AcgAccSetEmergencyIn,"m_AccCancelContract":AcgAccCancelContractIn,"m_AcmConnect":AcgAcmConnectIn,"m_AcmSendVci":AcgAcmSendVciIn,"m_AclSend":AcgAclMsgSendIn,"m_DasFsmSend":AcgFSMIn,"m_DasAtiReport":AcgDatisCReportIn,"m_DclSend":AcgDclReportIn,"m_DclFsmSend":AcgFSMIn,"m_AcgAbort;":AcgAbortDialogIn,"m_DllLogonResp":AcgDllLogonResponseIn,"m_DllForward":AcgDllForwardIn,"m_ManSend":AcgManCommandIn,"m_AcmLack":AcgLackIn,"m_ConnectIn":AcgConnectIn}
 AcgMessageSend = {"m_iMethod":None,"length":None,"unione":unione}
 AcgAclGetMessageReturn_u = {"m_args":AcgAclGetMessageOut}
 AcgAclMsgGetReturn  = {"m_returnValue":AcgErrors,"AcgAclGetMessageReturn_u":AcgAclGetMessageReturn_u,"m_element":AcgAclGetElementReturn}
