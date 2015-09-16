@@ -7,9 +7,11 @@ ECHO SERVER
 '''
 
 from ClientTCP import *
-from InterfaceUtils import *
+from BridgeUtils import *
 import asyncore
 import socket
+import binascii
+from OutputBridge import *
 
 try:
     import cPickle as pickle
@@ -17,73 +19,97 @@ except ImportError:
     import pickle
 
 
-
-
-class SocketTCP(asyncore.dispatcher_with_send):
-
-    def __init__(self,sock,whoiam,source_port):
+class SocketTCP(asyncore.dispatcher_with_send): 
+    
+    BASE_HEX=16
+    
+    def __init__(self,sock,source_addr):
         asyncore.dispatcher.__init__(self,sock=sock);
+        self.source_addr=source_addr # indirizzo IP sorgente del pacchetto TCP
         self.out_buffer = ''
-        self.source_port=source_port
-        self.whoiam=whoiam
-          
+        self.Address=BridgeUtils()
+        
     def handle_read(self):
+        
+        #ricevi il messaggio
+        
         while True:
             try:
-                tmp = self.recv(4096)
+                buffer = self.recv(4096)
             except:
                 self.close()
-                break
-        msg = pickle.loads(tmp)
-        #Confrontando il valore di porta, si smista il messaggio verso AIF o ACG o si memorizza
-        #print(msg)
-        self.dispatcher(msg)
+                break     
+        
+        #codifica esadecimale del messaggio
+        
+        msg=binascii.hexlify(buffer.encode('utf8'))
+        
+        Id,size=self.ReadHeaderTCP(msg)
+
+        #msg = pickle.loads(tmp) #testo in chiaro
+        
+        self.dispatcher(msg,size)
         self.close()
     
     def handle_close(self):
         self.close()
+    
+    def dispatcher(self,msg,size):
         
-    def dispatcher(self,msg):
+        #Manda il messaggio ad ACG
         
-        
-        Cdb=InterfaceUtils()
-        AifAddress=Cdb.GetAddress("AIF")
-        Aif_IP=AifAddress[0]
-        Aif_port=AifAddress[1]
-        AcgAddress=Cdb.GetAddress("ACG")
-        Acg_IP=AcgAddress[0]
-        Acg_port=AcgAddress[1]
-        
-        #Porte scelte per la connessione dati
-        
-        Acg_port_send=Acg_port+1
-        Aif_port_send=Aif_port+1
-        
-        #AIF
-        if(self.whoiam==Aif_port and self.source_port!=Acg_port_send):
-            #invia messaggio ad ACG
+        if(self.source_addr==self.Address.GetAddress("ACG")[0]):
+            print("Messaggio ricevuto da AIF, size: %d" %size)
+            self.display(msg)
             Acg=ClientTCP()
-            Acg.OpenClient(Acg_IP, Acg_port,Aif_port_send)
-            Acg.Send_Structure(msg)
-            print("Messaggio inviato ad ACG")
-        elif(self.whoiam==Aif_port and self.source_port==Acg_port_send):
-            print("Messaggio ricevuto da ACG")
-            print("DEBUG: STAMPA MESSAGGIO RICEVUTO %s"%msg)
-            #print("DEBUG: Stampa valore latDegrees contenuto nel messaggio: %d" %(msg["messaggio"]["latDegrees"])) 
-            print("Faro' qualcosa ....")
-        #ACG
-        elif(self.whoiam==Acg_port and self.source_port!=Aif_port_send):
-            #invio messaggio ad AIF
+            Acg.OpenClient(self.Address.GetAddress("AIF")[0],self.Address.GetAddress("AIF")[1] )
+            #serializzo le strutture dati
+            Acg.Send_Structure(msg) 
+            print("Messaggio inviato ad ACG")   
+            
+        #Manda il messaggio ad AIF
+        
+        elif(self.source_addr==self.Address.GetAddress("AIF")[0]):
+            print("Messaggio ricevuto da ACG:")
+            print(msg)
             Aif=ClientTCP()
-            Aif.OpenClient(Aif_IP, Aif_port,Acg_port_send)
-            Aif.Send_Structure(msg)
-            print("Messaggio inviato ad AIF")
-        elif(self.whoiam==Acg_port and self.source_port==Aif_port_send):
-            print("Messaggio ricevuto da AIF")
-            print("DEBUG: STAMPA MESSAGGIO RICEVUTO %s"%msg)
-            #print("DEBUG: Stampa valore latDegrees contenuto nel messaggio: %d" %(msg["messaggio"]["latDegrees"])) 
-            print("...faro' qualcosa...")
-                
+            Aif.OpenClient(self.Address.GetAddress("ACG")[0],self.Address.GetAddress("ACG")[1] )
+            Acg.Send_Structure(msg)
+            print("Messaggio inviato ad AIF")   
+            
+    def ReadHeaderTCP(self,msg): 
+        
+        #ricevi i primi 2 byte (1 byte= ID, 2 byte=size)
+        
+        Id=int(msg[0:2],self.BASE_HEX) #1 byte
+        size=int(msg[2:4],self.BASE_HEX) #2 byte
+        if (size==0):
+            size=int(msg[2:8],self.BASE_HEX) #nel caso di dimensione 4096 
+        return Id,size
+        
+        
+        #Funzione per il display del messaggio sul bridge 
+    def display(self,msg):
+        
+        Format_Output=OutputBridge(msg)
+        splitted_string=Format_Output.split_string()
+        Format_Output.print_output(splitted_string)
+        '''
+        #numero di righe da generare
+        
+        N_row=size/self.N_BYTES_ROW
+        
+        for i in range(0,N_row):
+            count=0                 #indice per scorrere la riga
+            string=""               
+            #costruisci la riga
+            for j in range(0,self.BASE_HEX,2):
+                print(j)
+                print(msg[j])
+                #print(msg[j:j+1]+"")
+            #print(format(i, "03d")+":")
+        '''    
+
 class EchoServer(asyncore.dispatcher):
     
     def __init__(self, host, port):
@@ -101,9 +127,5 @@ class EchoServer(asyncore.dispatcher):
         if pair is not None:
             sock, addr = pair
             print ("Incoming connection from %s" %repr(addr))
-            handler = SocketTCP(sock,self.port,addr[1])
+            handler = SocketTCP(sock,addr[0])
             
-"""
-server = EchoServer('localhost', 8080)
-asyncore.loop()
-"""

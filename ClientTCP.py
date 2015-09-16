@@ -26,9 +26,8 @@ class ClientTCP:
         self.m_socketType=False
         self.addr = ()
         
-        
-    def OpenClient(self,ipAddress,port,port_send):
-        
+    def OpenClient(self,ipAddress,port):
+            
         self.m_localIPAddress=ipAddress
         self.m_localPort=port
         
@@ -36,41 +35,41 @@ class ClientTCP:
         try:
             #crea una AF_INET, STREAM socket (TCP)
             self.m_socket = socket(AF_INET, SOCK_STREAM)
+            
             #print ("Socket Client successfully created")
-        except:
-            raise Exception ("Socket creation failed")
+        except OSError as err:
+            print ("Socket creation failed with error %s" %(err))
             exit(0)
         self.addr=(self.m_localIPAddress,self.m_localPort)
         try:
-            self.m_socket.bind((self.m_localIPAddress,port_send)) #questo permette di settare l'indirizzo completo da cui inviare i dati
-        except:
-            raise Exception("Binding error")
-        
-        #TIME_WAIT is the state that typically ties up the port for several minutes after the process has completed.
-                
-        result=self.m_socket.connect_ex(self.addr)
-        
-        #IMPORTANTE! Questo ciclo garantisce che la connessione effettivamente e' avvenuta con successo
-        #BYPASSA il problema del TIME_WAIT
-        
-        while(result!=0):
-            result=self.m_socket.connect_ex(self.addr)
-
+            self.m_socket.connect(self.addr)
+        except OSError as err:
+            raise Exception("Server not in listening. Error: %s" %err)
         self.m_socketType=False
-        print("SocketTCP:Connect OK")            
-            
+        print("SocketTCP:Connect OK") 
+                    
     def Send_Structure(self, msg):
         b = pickle.dumps(msg)
         self.m_socket.sendall(b)
         print("Messaggio mandato con successo")
         self.Close()
+    
+    def Send(self, buffer):
+        totalsent=0
+        while totalsent<len(buffer):
+            sent=self.m_socket.send(buffer)
+            if (sent==0):
+                raise RuntimeError("SocketTCP::sendto failed")
+            totalsent=totalsent+sent
         
     def Close(self):
             self.m_socket.close()
             
-
-
-
+            
+'''
+Server=ClientTCP()
+Server.OpenClient("192.168.0.76", 15000)
+'''
 """                       
 Server=ClientTCP()
 #Server.OpenClient("127.0.0.1", 5001)
