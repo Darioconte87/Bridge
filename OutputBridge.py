@@ -8,8 +8,8 @@ class OutputBridge(object):
 
     BASE_HEX=16
     
-    def __init__(self, buffer):
-        self.string=buffer
+    def __init__(self, bufferL):
+        self.string=bufferL
     
     """ Dividi il messaggio ricevuto in gruppi da 32 caratteri"""
         
@@ -22,7 +22,6 @@ class OutputBridge(object):
          
     def format_hex(self,string_chunk,nbytes):
         chars_item=nbytes*2
-        num_chunks=len(string_chunk)
         def chunkify(self):
             for start in xrange(0,len(string_chunk),chars_item):
                 yield string_chunk[start:start+chars_item]

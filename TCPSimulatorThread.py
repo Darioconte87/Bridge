@@ -3,30 +3,32 @@ Created on 20 lug 2015
 
 @author: DarioConte
 '''
-from MyThread import *
-from SocketTCP import *
+from MyThread import MyThread
+from SocketTCP import TheServer
+import sys
 
 class TCPSimulatorThread(MyThread):
     
     Client="Client"
     
-    def __init__(self, label,ip,port,multicast,message_type,socket_type):
+    def __init__(self, label,ip,port):
         MyThread.__init__(self)
         self.m_label=label
         self.m_ip=ip
         self.m_port=port
-        self.m_multicast=multicast
-        self.m_message_type=message_type
-        self.m_socketType=socket_type
     
     def run(self):
         MyThread.run(self)
         #creo la socket per la comunicazione
         #PARTE SERVER
         #print("CONFIGURAZIONE SERVER")
-        EchoServer(self.m_ip, int(self.m_port))
-        asyncore.loop()
-                
+
+        server = TheServer(self.m_ip, int(self.m_port))
+        try:
+            server.main_loop()
+        except KeyboardInterrupt:
+            print "Ctrl C - Stopping server"
+            sys.exit(1)        
                 
     def isRunning(self):
         return self.bRunning

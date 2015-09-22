@@ -12,20 +12,9 @@ class Configuration:
     
     COMMENT_TAG = "//"
     LABEL_TAG = "Label"
-    SOCKET_TYPE_TAG = "Type"
-    SOCKET_TYPE_CLIENT_VALUE = "CLIENT"
-    SOCKET_TYPE_SERVER_VALUE = "SERVER"
     IP_TAG = "IPAddress"
     PORT_TAG = "Port"
-    MULTICAST_TAG = "Multicast"
-    MULTICAST_YES_VALUE = "yes"
-    MULTICAST_NO_VALUE = "no"
-    MESSAGE_TYPE_TAG = "MessageType"
     IPAddressMap={}
-    
-    # Path di default
-    
-    #PATH_CONFIGURATION_FILE = "../Bridge.ini"
     
     def __init__(self): 
         self.Line = ""
@@ -49,10 +38,11 @@ class Configuration:
             #ignoro i commenti
         
             if(self.ReadNextLine(f)):
-                
-                SingleLine=self.split()     
+ 
                 #SingleLine[0]=primo campo
                 #SingleLine[1]=campo valore     
+                               
+                SingleLine=self.split()     
                           
                 if(SingleLine[0].lower()==Configuration.LABEL_TAG.lower()):
                     
@@ -60,41 +50,13 @@ class Configuration:
         
                     ipAddress = IPAddressConfiguration()
                     
-                    #ATTENZIONE: DEVO INSERIRE IL VALORE DELLA LABEL NELL'ADDRESS-->DA CONFIGURARE
-                    #assegna valore della label ad un valore
+                    #assegna alla mappa di AIF o ACG il corrispettivo oggetto di configurazione
                     Configuration.IPAddressMap[SingleLine[1]]=ipAddress
                     
-                elif(SingleLine[0].lower()==Configuration.SOCKET_TYPE_TAG.lower()):    
-                    if((SingleLine[1].lower()==Configuration.SOCKET_TYPE_CLIENT_VALUE.lower())):
-                        ipAddress.SocketType=SingleLine[1]
-                    elif (SingleLine[1].lower()==Configuration.SOCKET_TYPE_SERVER_VALUE.lower()):
-                        ipAddress.SocketType=SingleLine[1]
-                    else:
-                        self.AbortExecution()    
-                elif(SingleLine[0].lower()==Configuration.SOCKET_TYPE_TAG.lower()):   
-                    if(SingleLine[1].lower()==Configuration.SOCKET_TYPE_CLIENT_VALUE.lower()):
-                        ipAddress.SocketType=SingleLine[1]
-                    elif (SingleLine[1].lower()==Configuration.SOCKET_TYPE_SERVER_VALUE.lower()):
-                        ipAddress.SocketType=SingleLine[1]
-                    else:
-                        self.AbortExecution() 
                 elif(SingleLine[0].lower()==Configuration.IP_TAG.lower()):   
                     ipAddress.IP=SingleLine[1]
                 elif(SingleLine[0].lower()==Configuration.PORT_TAG.lower()):
                     ipAddress.Port=atoi(SingleLine[1])
-                elif(SingleLine[0].lower()==Configuration.MULTICAST_TAG.lower()):
-                    value=SingleLine[1].lower()
-                    if(value==Configuration.MULTICAST_YES_VALUE.lower()):
-                        ipAddress.Multicast=True
-                    elif(value==Configuration.MULTICAST_NO_VALUE):
-                        ipAddress.Multicast=False
-                    else:
-                        self.AbortExecution()
-                elif(SingleLine[0].lower()==Configuration.MESSAGE_TYPE_TAG.lower()):        
-                        ipAddress.MessageType=atoi(SingleLine[1])
-                else:
-                    self.AbortExecution()    
-         
         f.close()        
         
     def split(self):
@@ -119,25 +81,9 @@ class Configuration:
         return lineRead
              
     def TrimLine(self):
-        buffer=""
+        bufferL=""
         
         for i in range(0,len(self.Line)):
             if(self.Line[i]!=' ') and (self.Line[i]!='\t') and (self.Line[i]!='\n'):
-                buffer+=self.Line[i]
-        self.Line=buffer
-    
-#CHECK 
-'''
-print("Type:%s" %ipAddress.SocketType)        
-print("IP:%s" %ipAddress.IP)
-print("Porta %s"%ipAddress.Port)
-print("Multicast %s"%ipAddress.Multicast)
-print("Messagge Type: %s" %ipAddress.MessageType)                    
-'''
-                    
-        
-'''        
-#test di funzionamento della classe        
-prova = Configuration()
-prova.ReadConfigurationFromFile("../BridgeACG.ini")
-'''
+                bufferL+=self.Line[i]
+        self.Line=bufferL

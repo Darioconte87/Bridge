@@ -4,12 +4,16 @@ Created on 11 set 2015
 @author: DarioConte
 '''
 
-from Configuration import *
+from Configuration import Configuration
 from sys import platform as _platform
 
 class BridgeUtils(object):
     
     if _platform == "linux" or _platform == "linux2":
+        # linux
+        ConfigurationPaths={"ACG":"./BridgeACG.ini","AIF":"./BridgeAIF.ini"}
+    elif _platform == "darwin":
+        # OS X
         ConfigurationPaths={"ACG":"./BridgeACG.ini","AIF":"./BridgeAIF.ini"}
     elif _platform == "win32":
         # Windows...

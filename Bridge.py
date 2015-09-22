@@ -4,7 +4,7 @@ Created on 21 lug 2015
 @author: DarioConte
 '''
 
-from TCPInterface import *
+from TCPInterface import TCPInterface
 
 if __name__ == '__main__':
     
