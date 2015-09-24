@@ -88,16 +88,19 @@ class TheServer:
                     self.on_close()
                     break                
             
-                #E' necessario convertire la stringa ricevuta in bytes per leggere il campo dimensione
+                if(len(data)!=0):
+                    #E' necessario convertire la stringa ricevuta in bytes per leggere il campo dimensione
                 
-                msg=self.convert_to_hex(data)
+                    msg=self.convert_to_hex(data)
                 
-                #Estrai Id e recupera la dimensione del messaggio
-                Id,size=self.ReadHeaderTCP(msg)
+                    #Estrai Id e recupera la dimensione del messaggio
+                    Id,size=self.ReadHeaderTCP(msg)
                 
-                #distingui la sorgente e manda il messaggio all'altro nodo
-                self.on_recv(msg, Id, size)
-                    
+                    #distingui la sorgente e manda il messaggio all'altro nodo
+                    self.on_recv(msg, Id, size)
+                
+                else:
+                    break
                 
     def on_accept(self):
         
